@@ -41,11 +41,11 @@ export const signup = async (req: Request, res: Response):Promise<any> => {
 
 export const login = async (req: Request, res: Response): Promise<any> => {
     //validating user schema
-    const loginSchema = signupSchema.safeParse(req.body);
-    if (!loginSchema.success) {
-        return res.status(400).json({ errors: loginSchema.error.flatten().fieldErrors });
+    const parsedLogin = loginSchema.safeParse(req.body);
+    if (!parsedLogin.success) {
+        return res.status(400).json({ errors: parsedLogin.error.flatten().fieldErrors });
     }
-    const { email, password } = loginSchema.data;
+    const { email, password } = parsedLogin.data;
     try {
         //check that user exist or not
         const user = await client.user.findUnique({ where: { email } })

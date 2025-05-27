@@ -97,7 +97,7 @@ export const updateEvent = async (req: AuthenticatedRequest, res: Response): Pro
                 dateTime,
                 location,
                 totalSeats,
-                availableSeats
+                availableSeats:totalSeats
             }
         });
 
