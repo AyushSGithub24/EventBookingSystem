@@ -9,7 +9,25 @@ const client = new PrismaClient();
 
 export const getAllEvents = async (req: Request, res: Response): Promise<any> => {
     try {
-        const events = await client.event.findMany();
+        const page = parseInt((req.query.page as string) || "1");
+        const limit = parseInt((req.query.limit as string) || "10");
+        const skip = (page - 1) * limit;
+        const location = req.query.location as string | undefined;
+        const title = req.query.title as string | undefined;
+        const filters: any = {};
+        if (location) {
+            filters.location = { contains: location, mode: "insensitive" };
+        }
+        if (title) {
+            filters.title = { contains: title, mode: "insensitive" };
+        }
+        // console.log(filters)
+        const events = await client.event.findMany({
+            where: filters,
+            skip,
+            take: limit,
+            orderBy: { dateTime: "asc" },
+        });
         return res.status(200).json({ message: "Event fetched Succesfully ", events })
     } catch (error) {
         console.error("Error getting all events: ", error);
@@ -97,7 +115,7 @@ export const updateEvent = async (req: AuthenticatedRequest, res: Response): Pro
                 dateTime,
                 location,
                 totalSeats,
-                availableSeats:totalSeats
+                availableSeats: totalSeats
             }
         });
 
@@ -129,7 +147,7 @@ export const deleteEvent = async (req: AuthenticatedRequest, res: Response): Pro
                 id: eventId
             }
         })
-        return res.status(200).json({message: "Event Deleted succesfully "})
+        return res.status(200).json({ message: "Event Deleted succesfully " })
     } catch (error) {
         console.error("Error Deleting  event: ", error);
         return res.status(500).json({ "message": "An error occurred while Deleting  event", error })
