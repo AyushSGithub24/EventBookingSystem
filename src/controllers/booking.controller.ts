@@ -35,8 +35,9 @@ export const createBookings = async (req: AuthenticatedRequest, res: Response): 
     if (!userId) {
         return res.status(401).json({ error: "Unauthorized access" });
     }
-
-    const { eventId, seats } = req.body;
+    const {eventId}=req.params
+    const { seats } = req.body;
+    
 
     if (!eventId || !seats || seats <= 0) {
         return res.status(400).json({ error: "Invalid eventId or seat count" });
